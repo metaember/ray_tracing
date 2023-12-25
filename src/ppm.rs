@@ -1,8 +1,7 @@
 use anyhow::Result;
-use glam::DVec3;
 use indicatif::ProgressIterator;
 use itertools::Itertools;
-use std::fs;
+use std::{fs, path::Path};
 
 use crate::types::Color;
 
@@ -28,15 +27,13 @@ impl PPM {
             .cartesian_product(0..self.width)
             .progress_count(self.width as u64 * self.height as u64)
             .map(|(y, x)| {
-                let res = f(
-                    x as f64 / (self.width - 1) as f64,
-                    y as f64 / (self.height - 1) as f64,
-                );
+                let res = f(x as f64, y as f64);
                 res.write()
             })
             .join("\n");
 
-        fs::write(filename, format!("{header}\n{content}"))?;
+        let output_dir = Path::new("outputs");
+        fs::write(output_dir.join(filename), format!("{header}\n{content}"))?;
         return Ok(());
     }
 }
