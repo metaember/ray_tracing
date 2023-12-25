@@ -1,7 +1,8 @@
 use anyhow::Result;
 use glam::DVec3;
+use indicatif::ProgressIterator;
 use itertools::Itertools;
-use std::{fs, io};
+use std::fs;
 
 pub struct PPM {
     width: u32,
@@ -18,22 +19,12 @@ impl PPM {
         }
     }
 
-    // pub fn write(self, filename: &str, pixels: Vec<Vec<DVec3>>) -> Result<()> {
-    //     let mut file = File::create(filename)?;
-    //     let header = format!("P3\n{} {}\n{}\n", self.width, self.height, self.max_color);
-    //     file.write_all(header.as_bytes())?;
-
-    //     (0..self.height)
-    //         .cartesian_product(0..self.width)
-    //         .map(|(x, y)| {});
-    //     return Ok(());
-    // }
-
     pub fn write_fn(self, filename: &str, f: impl Fn(f64, f64) -> DVec3) -> Result<()> {
         let header = format!("P3\n{} {}\n{}\n", self.width, self.height, self.max_color);
 
         let content = (0..self.height)
             .cartesian_product(0..self.width)
+            .progress_count(self.width as u64 * self.height as u64)
             .map(|(y, x)| {
                 let res = f(
                     x as f64 / (self.width - 1) as f64,
