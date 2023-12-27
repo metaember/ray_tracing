@@ -1,17 +1,20 @@
 pub mod camera;
+pub mod hittable;
 pub mod ppm;
 pub mod types;
 
 use glam::DVec3;
 
+use crate::hittable::{Hittable, Sphere};
 use crate::ppm::PPM;
 use crate::types::{Color, Point, Ray};
 
-const IMAGE_WIDTH: u32 = 256;
-const IMAGE_HEIGHT: u32 = 256;
 const MAX_COLOR: u8 = 255;
 
-fn generate_gradient() {
+fn _generate_gradient() {
+    const IMAGE_WIDTH: u32 = 256;
+    const IMAGE_HEIGHT: u32 = 256;
+
     let image = PPM::new(IMAGE_WIDTH, IMAGE_HEIGHT, MAX_COLOR);
     let gradient = |x: f64, y: f64| {
         let r = 0.;
@@ -26,6 +29,11 @@ fn generate_gradient() {
 // ray tracing proper
 
 fn ray_color(ray: &Ray) -> Color {
+    let sphere = Sphere::new(Point::new(0., 0., -1.), 0.5);
+    if let Some(_) = sphere.hit(ray, -f64::INFINITY, f64::INFINITY) {
+        return Color::new(1., 0., 0.);
+    }
+
     let unit_direction = ray.direction.normalize();
     let vpos = 0.5 * (unit_direction.y + 1.);
     return Color::new_from(Color::new(1., 1., 1.).lerp(*Color::new(0.5, 0.7, 1.), vpos));
@@ -75,5 +83,5 @@ fn main() {
     };
 
     let image = PPM::new(image_width, image_height, MAX_COLOR);
-    image.write_fn("listing_9.ppm", render_fn).unwrap();
+    image.write_fn("listing_11.ppm", render_fn).unwrap();
 }
