@@ -16,6 +16,6 @@ pub fn main(name: &str) {
     world.push(Box::new(Sphere::new(Point::new(0., -100.5, -1.), 100.)));
 
     // Camera setup
-    let camera = Camera::new(16. / 9., 400);
+    let camera = Camera::new(16. / 9., 400, 100);
     camera.render(&world, name);
 }

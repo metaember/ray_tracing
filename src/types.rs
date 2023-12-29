@@ -26,6 +26,18 @@ impl Color {
         let ib = (255.999 * self.z) as u32;
         format!("{} {} {}", ir, ig, ib)
     }
+
+    pub fn scale(self, scale: f64) -> Self {
+        Self(self.0 * scale)
+    }
+}
+
+impl std::ops::Add for Color {
+    type Output = Self;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Self(self.0 + rhs.0)
+    }
 }
 
 pub type Point = DVec3;
